@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.9
 
 FROM golang:1.26-trixie AS go-toolchain
-FROM rust:1.86 AS rust-toolchain
+FROM rust:1.88 AS rust-toolchain
 FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim AS py-builder
 
 COPY --from=go-toolchain /usr/local/go /usr/local/go

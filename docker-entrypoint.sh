@@ -3,8 +3,16 @@ set -eu
 
 mkdir -p /app/data
 
+: "${OV_EMBED_DIMENSION:=1536}"
+: "${OV_ROOT_API_KEY:?OV_ROOT_API_KEY is required}"
+
 cat > /app/ov.conf <<EOF
 {
+  "server": {
+    "host": "0.0.0.0",
+    "port": 1933,
+    "root_api_key": "${OV_ROOT_API_KEY}"
+  },
   "embedding": {
     "dense": {
       "provider": "${OV_EMBED_PROVIDER}",

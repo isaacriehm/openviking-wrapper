@@ -32,4 +32,4 @@ cat > /app/ov.conf <<EOF
 }
 EOF
 
-exec openviking-server --config /app/ov.conf --port 1933
+exec /opt/venv/bin/openviking-server --config /app/ov.conf --port 1933

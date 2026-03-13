@@ -14,6 +14,7 @@ ENV CARGO_HOME="/usr/local/cargo"
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
 ENV UV_NO_DEV=1
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -29,3 +30,29 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     uv sync --no-editable
+
+FROM python:3.13-slim-trixie
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    libstdc++6 \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=py-builder /src/.venv /app/.venv
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV OPENVIKING_CONFIG_FILE="/app/ov.conf"
+
+EXPOSE 1933
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:1933/health || exit 1
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

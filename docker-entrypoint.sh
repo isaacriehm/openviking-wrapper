@@ -23,7 +23,6 @@ cat > /app/ov.conf <<EOF
   "storage": {
     "workspace": "/app/data",
     "agfs": {
-      "mode": "binding-client",
       "backend": "local"
     },
     "vectordb": {
